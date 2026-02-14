@@ -1,4 +1,4 @@
-print("START PROGRAMU")
+#print("START PROGRAMU")
 
 import random
 
@@ -71,7 +71,7 @@ def count_bulls_cows(secret, guess):
 
 def play_game():
     secret = generate_secret()
-    print("SECRET:", secret) 
+    #print(secret) 
 
     guesses = 0
 
