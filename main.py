@@ -44,7 +44,7 @@ def validate_guess(guess):
     if guess[0] == "0":
         return "Number must not start with zero."
 
-    # kontrola duplicit bez set()
+    # kontrola duplicit
     for i in range(len(guess)):
         for j in range(i + 1, len(guess)):
             if guess[i] == guess[j]:
@@ -61,7 +61,7 @@ def count_bulls_cows(secret, guess):
         if guess[i] == secret[i]:
             bulls += 1
         else:
-            # kontrola cows ručně
+            # kontrola cows 
             for j in range(digits):
                 if guess[i] == secret[j]:
                     cows += 1
