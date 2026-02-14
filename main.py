@@ -15,22 +15,24 @@ def intro():
 
 
 def generate_secret():
-    numbers = list("0123456789")
+    secret = ""
 
-    first = random.choice(numbers[1:])
-    numbers.remove(first)
+    while len(secret) < digits:
+        number = str(random.randint(0, 9))
 
-    rest = random.sample(numbers, digits - 1)
+        # první číslo nesmí být 0
+        if len(secret) == 0 and number == "0":
+            continue
 
-    secret = first
-    for n in rest:
-        secret = secret + n
+        # kontrola, aby se čísla neopakovala
+        if number not in secret:
+            secret = secret + number
 
-        return secret
-
+    return secret
 
 
 def validate_guess(guess):
+
     if len(guess) != digits:
         return "Input must be exactly 4 digits."
 
@@ -40,8 +42,11 @@ def validate_guess(guess):
     if guess[0] == "0":
         return "Number must not start with zero."
 
-    if len(set(guess)) != digits:
-        return "Digits must be unique."
+    # kontrola duplicit bez set()
+    for i in range(len(guess)):
+        for j in range(i + 1, len(guess)):
+            if guess[i] == guess[j]:
+                return "Digits must be unique."
 
     return None
 
@@ -53,8 +58,11 @@ def count_bulls_cows(secret, guess):
     for i in range(digits):
         if guess[i] == secret[i]:
             bulls += 1
-        elif guess[i] in secret:
-            cows += 1
+        else:
+            # kontrola cows ručně
+            for j in range(digits):
+                if guess[i] == secret[j]:
+                    cows += 1
 
     return bulls, cows
 
@@ -87,9 +95,5 @@ def play_game():
         print(separator)
 
 
-def main():
-    intro()
-    play_game()
-
-
-main()
+intro()
+play_game()
