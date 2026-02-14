@@ -1,5 +1,3 @@
-print("START PROGRAMU")
-
 import random
 
 digits = 4
@@ -71,14 +69,14 @@ def count_bulls_cows(secret, guess):
 
 def play_game():
     secret = generate_secret()
-    print("SECRET:", secret) 
+    #print(secret) 
 
     guesses = 0
 
     while True:
         guess = input(">>> ")
 
-        error = validate_guess(guess)
+        error = len(set(guess)) != digits
         if error:
             print(error)
             print(separator)
@@ -101,3 +99,4 @@ def play_game():
 
 intro()
 play_game()
+#if __name__ = main()
