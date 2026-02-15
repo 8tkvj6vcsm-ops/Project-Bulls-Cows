@@ -20,11 +20,9 @@ def generate_secret():
     while len(secret) < digits:
         number = str(random.randint(0, 9))
 
-        # první číslo nesmí být 0
         if len(secret) == 0 and number == "0":
             continue
 
-        # kontrola, aby se čísla neopakovala
         if number not in secret:
             secret = secret + number
 
@@ -32,6 +30,7 @@ def generate_secret():
 
 
 def validate_guess(guess):
+    guess = guess.strip()
 
     if len(guess) != digits:
         return "Input must be exactly 4 digits."
@@ -42,7 +41,6 @@ def validate_guess(guess):
     if guess[0] == "0":
         return "Number must not start with zero."
 
-    # kontrola duplicit
     for i in range(len(guess)):
         for j in range(i + 1, len(guess)):
             if guess[i] == guess[j]:
@@ -58,30 +56,32 @@ def count_bulls_cows(secret, guess):
     for i in range(digits):
         if guess[i] == secret[i]:
             bulls += 1
-        else:
-            # kontrola cows 
-            for j in range(digits):
-                if guess[i] == secret[j]:
-                    cows += 1
+        elif guess[i] in secret:
+            cows += 1
 
     return bulls, cows
 
 
+def format_result(count, word):
+    if count == 1:
+        return str(count) + " " + word
+    return str(count) + " " + word + "s"
+
+
 def play_game():
     secret = generate_secret()
-    #print(secret) 
-
     guesses = 0
 
     while True:
         guess = input(">>> ")
 
-        error = len(set(guess)) != digits
-        if error:
-            print(error)
+        error_message = validate_guess(guess)
+        if error_message:
+            print(error_message)
             print(separator)
             continue
 
+        guess = guess.strip()
         guesses += 1
 
         bulls, cows = count_bulls_cows(secret, guess)
@@ -93,10 +93,14 @@ def play_game():
             print("That's amazing!")
             break
 
-        print(bulls, "bulls,", cows, "cows")
+        print(format_result(bulls, "bull") + ", " + format_result(cows, "cow"))
         print(separator)
 
 
-intro()
-play_game()
-#if __name__ = main()
+def main():
+    intro()
+    play_game()
+
+
+if __name__ == "__main__":
+    main()
