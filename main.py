@@ -1,39 +1,47 @@
 import random
 
-digits = 4
-separator = "-" * 47
+DIGITS = 4  # length of the secret number
+SEPARATOR = "-" * 47  # visual separator for output lines
 
 
 def intro():
+    """Print game introduction and basic instructions."""
     print("Hi there!")
-    print(separator)
-    print("I've generated a random 4 digit number for you.")
+    print(SEPARATOR)
+    print(f"I've generated a random {DIGITS} digit number for you.")
     print("Let's play a bulls and cows game.")
-    print(separator)
+    print(SEPARATOR)
     print("Enter a number:")
-    print(separator)
+    print(SEPARATOR)
 
 
 def generate_secret():
+    """Generate a random secret number with unique digits and non-zero first digit."""
     secret = ""
 
-    while len(secret) < digits:
+    while len(secret) < DIGITS:
         number = str(random.randint(0, 9))
 
+        # first digit must not be zero
         if len(secret) == 0 and number == "0":
             continue
 
+        # digits must be unique
         if number not in secret:
-            secret = secret + number
+            secret += number
 
     return secret
 
 
 def validate_guess(guess):
-    guess = guess.strip()
+    """
+    Validate user's guess.
 
-    if len(guess) != digits:
-        return "Input must be exactly 4 digits."
+    Returns:
+        None if the guess is valid, otherwise an error message (str).
+    """
+    if len(guess) != DIGITS:
+        return f"Input must be exactly {DIGITS} digits."
 
     if not guess.isdigit():
         return "Input must contain digits only."
@@ -41,63 +49,82 @@ def validate_guess(guess):
     if guess[0] == "0":
         return "Number must not start with zero."
 
-    for i in range(len(guess)):
-        for j in range(i + 1, len(guess)):
-            if guess[i] == guess[j]:
-                return "Digits must be unique."
+    # check uniqueness of digits using a set (no nested loops)
+    if len(set(guess)) != len(guess):
+        return "Digits must be unique."
 
     return None
 
 
 def count_bulls_cows(secret, guess):
+    """
+    Count bulls and cows for the given secret and guess.
+
+    Bull  = correct digit in the correct position.
+    Cow   = correct digit in the wrong position.
+
+    Returns:
+        (bulls, cows) tuple of integers.
+    """
     bulls = 0
     cows = 0
 
-    for i in range(digits):
-        if guess[i] == secret[i]:
+    # enumerate gives index + digit from the guess
+    for index, guess_digit in enumerate(guess):
+        if guess_digit == secret[index]:
             bulls += 1
-        elif guess[i] in secret:
+        elif guess_digit in secret:
             cows += 1
 
     return bulls, cows
 
 
-def format_result(count, word):
+def format_result(count, singular_word):
+    """
+    Format result.
+
+    Examples:
+        0 -> '0 bulls'
+        1 -> '1 bull'
+        2 -> '2 bulls'
+    """
     if count == 1:
-        return str(count) + " " + word
-    return str(count) + " " + word + "s"
+        return f"{count} {singular_word}"
+    return f"{count} {singular_word}s"
 
 
 def play_game():
+    """Main game loop that processes user guesses until the secret is found."""
     secret = generate_secret()
     guesses = 0
 
     while True:
-        guess = input(">>> ")
+        raw_guess = input(">>> ")
+        guess = raw_guess.strip()
 
         error_message = validate_guess(guess)
         if error_message:
             print(error_message)
-            print(separator)
+            print(SEPARATOR)
             continue
 
-        guess = guess.strip()
         guesses += 1
-
         bulls, cows = count_bulls_cows(secret, guess)
 
-        if bulls == digits:
+        if bulls == DIGITS:
             print("Correct, you've guessed the right number")
-            print("in", guesses, "guesses!")
-            print(separator)
+            guess_word = "guess" if guesses == 1 else "guesses"
+            print(f"in {guesses} {guess_word}!")
+            print(SEPARATOR)
             print("That's amazing!")
             break
 
-        print(format_result(bulls, "bull") + ", " + format_result(cows, "cow"))
-        print(separator)
+        print(f"{format_result(bulls, 'bull')}, {format_result(cows, 'cow')}")
+        print(SEPARATOR)
 
 
 def main():
+    """Run the Bulls & Cows game."""
     intro()
     play_game()
 
